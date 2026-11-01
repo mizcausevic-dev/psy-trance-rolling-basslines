@@ -1,0 +1,41 @@
+name: Correct publication line
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: ${{ contains(github.event.head_commit.message, 'Correct the live publication line') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Point the catalog at the live pages
+        run: |
+          python3 << 'PY'
+          from pathlib import Path
+          path = Path("index.html")
+          text = path.read_text(encoding="utf-8")
+          text = text.replace(
+              "There is no checkout, no scarcity claim, and no live URL. ",
+              "There is no checkout and no scarcity claim. ",
+          )
+          text = text.replace(
+              "The GitHub repository is https://github.com/mizcausevic-dev/psy-trance-rolling-basslines and it is private. No public live page has been verified.",
+              "The catalog is https://mizcausevic-dev.github.io/psy-trance-rolling-basslines/ and the media page is https://mizcausevic-dev.github.io/psy-trance-rolling-basslines/media.html.",
+          )
+          text = text.replace('content="noindex"', 'content="index,follow"')
+          path.write_text(text, encoding="utf-8")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "already corrected"
+          else
+            git commit -m "Name the live catalog [skip ci]"
+            git push
+          fi
