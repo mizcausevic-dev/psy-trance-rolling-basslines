@@ -2,7 +2,7 @@
 
 Original note-only MIDI studies of rolling monophonic basslines. Eight studies, two bass variations each. Harmonic references and kicks are cataloged separately and are not part of the core count.
 
-GitHub repository: https://github.com/mizcausevic-dev/psy-trance-rolling-basslines. This repository is private. The MIDI files, preview audio, film, stills, and catalog page are produced in this repository from the generator.
+This repository is the local pack. The GitHub repository is https://github.com/mizcausevic-dev/psy-trance-rolling-basslines and it is private. No public live page has been verified.
 
 ## What you can open
 
@@ -62,11 +62,11 @@ File existence, parse, PPQ, tempo, 4/4, end-of-track boundary, note pairing, ran
 
 Social captions, the X post, and the Medium article are drafts. They are not access controls. If this repository is public, the drafts are public. Do not treat them as posted to Instagram, X, or Medium.
 
-Repository description: Original note-only MIDI studies of rolling monophonic psytrance basslines, with matched validation and a simple-synth preview.
+Prepared repository description, not applied: Original note-only MIDI studies of rolling monophonic psytrance basslines, with matched validation and a simple-synth preview.
 
-Topics: midi, psytrance, bassline, music-production, electronic-music, composition, general-midi, study-pack.
+Prepared topics, not applied: midi, psytrance, bassline, music-production, electronic-music, composition, general-midi, study-pack.
 
-No release tag was created. No public live page URL has been verified. `index.html` keeps its name because players and links depend on it.
+No release tag was created. No live URL was verified. `index.html` keeps its name because players and links depend on it. A multi-theme dashboard was not added: this page is the file catalog the pack requires.
 
 ## Limitations
 

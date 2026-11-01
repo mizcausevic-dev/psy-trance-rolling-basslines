@@ -1,0 +1,67 @@
+preview, not a master
+{
+  "arrangement_path": "midi/arrangement.mid",
+  "arrangement_sha256": "918e934362559e1c4f3ad84ca259c255e483cdea380951bc43da247fe536a436",
+  "encode": "libmp3lame CBR 192 kbps, mono source",
+  "excerpt": {
+    "bars": "1-16, the full container",
+    "end_tick": 61440,
+    "sequencing": "bass variation A, harmonic reference, and kick-a together",
+    "start_tick": 0,
+    "study": "s01",
+    "transposition": "none"
+  },
+  "intermediate_wav": "build/preview.wav",
+  "intermediate_wav_note": "The WAV is gitignored build storage. The delivered preview is the MP3.",
+  "intermediate_wav_sha256": "88edb3341175471c4cf492997ee3fb97d00d07a573f68ab8448ac09a03277f68",
+  "label": "preview, not a master",
+  "listening": "No human listening audition was performed for this build.",
+  "mapping": {
+    "bassline": "saw through a one-pole lowpass, short decay",
+    "harmonic-reference": "triangle, slow decay",
+    "kick-reference": "falling sine plus a deterministic 4 ms noise click"
+  },
+  "mp3_encode_command": [
+    "ffmpeg",
+    "-y",
+    "-i",
+    "/home/runner/work/psy-trance-rolling-basslines/psy-trance-rolling-basslines/build/preview.wav",
+    "-codec:a",
+    "libmp3lame",
+    "-b:a",
+    "192k",
+    "/home/runner/work/psy-trance-rolling-basslines/psy-trance-rolling-basslines/preview/preview.mp3"
+  ],
+  "mp3_path": "preview/preview.mp3",
+  "mp3_sha256": "b30fe0b59e18fb0bceae8b47104119f1396ca317c6bd4950b855a8964c3fdc20",
+  "pack_id": "psy-trance-rolling-basslines",
+  "program_changes": "No program changes are encoded. A conventional GM player will normally use its default piano program for pitched channels unless configured otherwise; compatible GM channel 10 percussion is treated separately. Player behavior may vary.",
+  "renderer": "simple-synth-1.0.0",
+  "renderer_note": "These voices are preview mappings. They are not encoded in the MIDI file.",
+  "rounding": "sample = floor(seconds * sample_rate + 0.5), computed from tick 0; intervals are not summed",
+  "sample_peak": 20527,
+  "sample_peak_dbfs": -4.062489052891738,
+  "sample_peak_note": "This is a sample peak of the integer mix after scaling. It is not a true-peak measurement and it is not LUFS.",
+  "score_seconds": 27.428544,
+  "score_sha256": "8ed4729195bb3d7220a8055bccf364ae1efbaa0543412ce11a27db65f3c02763",
+  "seconds_encoded": 27.454694,
+  "source_parts": [
+    {
+      "id": "s01.bass.a",
+      "path": "midi/s01-downbeat-void/bassline-a.mid",
+      "sha256": "da39ae1d8d14796db5c2643bbb748b3ad8397e2abf190f73810add409a8ce531"
+    },
+    {
+      "id": "s01.harmonic",
+      "path": "midi/s01-downbeat-void/harmonic-reference.mid",
+      "sha256": "16314cd0c9abf72f712606d59828dc6d2975140b5f8946378b28b74086d4a7ae"
+    },
+    {
+      "id": "s01.kick.a",
+      "path": "midi/s01-downbeat-void/kick-a.mid",
+      "sha256": "bb2c83d88e3ff10c9dfedd3f0899614a419e96c06509a308a65159215802ed6e"
+    }
+  ],
+  "tempo_authority": "encoded MIDI tempo",
+  "tempo_us": 428571
+}

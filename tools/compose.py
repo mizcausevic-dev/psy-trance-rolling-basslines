@@ -1015,7 +1015,6 @@ def compose() -> dict:
         "ppq": PPQ,
         "parts": parts,
         "arrangement": arrangement,
-        "identityo116kickeon": e.",
+        "identity_check": identity,
     }
-    returnin cata6kiin catans",  "core,  "c}
-   
+    return {"catalog": catalog, "score": score}
