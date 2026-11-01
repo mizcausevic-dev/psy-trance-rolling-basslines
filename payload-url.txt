@@ -1,9 +1,23 @@
-== 0x0
-curl: (22) The requested URL returned error: 503
+== tmpfiles
+{"status":"success","data":{"url":"https://tmpfiles.org/wtA1dEU0d3ke/site.tar.gz"}}
+== bashupload
+curl: (6) Could not resolve host: bashupload.com
 
-== catbox
-curl: (22) The requested URL returned error: 412
+== gist
+failed to collect files for posting: failed to upload site.tar.gz: binary file not supported
 
-== litterbox
-curl: (22) The requested URL returned error: 500
-
+== uguu
+{
+    "success": true,
+    "files": [
+        {
+            "hash": "9eff06e3bd0680b5",
+            "filename": "GBVqMerN.tar.gz",
+            "mimetype": "application\/gzip",
+            "url": "https:\/\/h.uguu.se\/GBVqMerN.tar.gz",
+            "size": 2143160,
+            "dupe": false
+        }
+    ],
+    "errors": []
+}
