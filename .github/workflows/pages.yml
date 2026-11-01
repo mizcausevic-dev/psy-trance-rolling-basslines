@@ -1,0 +1,53 @@
+name: Publish preview
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: ${{ !contains(github.event.head_commit.message, 'Record Pages status') }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Make the repository public and enable Pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          {
+            echo "== visibility"
+            gh api -X PATCH "repos/${{ github.repository }}" -f visibility=public -F private=false
+            echo "== pages create"
+            gh api --method POST "repos/${{ github.repository }}/pages" \
+              -f build_type=legacy \
+              -f "source[branch]=main" \
+              -f "source[path]=/"
+            echo "== pages read"
+            gh api "repos/${{ github.repository }}/pages"
+          } > pages-status.txt 2>&1
+          cat pages-status.txt
+
+      - name: Record the Pages result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pages-status.txt
+          if git diff --cached --quiet; then
+            echo "status unchanged"
+          else
+            git commit -m "Record Pages status [skip ci]"
+            git push
+          fi
