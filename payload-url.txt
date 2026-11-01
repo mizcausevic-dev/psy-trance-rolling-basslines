@@ -1,0 +1,9 @@
+== 0x0
+curl: (22) The requested URL returned error: 503
+
+== catbox
+curl: (22) The requested URL returned error: 412
+
+== litterbox
+curl: (22) The requested URL returned error: 500
+
