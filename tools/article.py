@@ -1,0 +1,40 @@
+"""Factual article draft. Not published."""
+
+from __future__ import annotations
+
+from tools.statements import AUDITION, ON_PICTURE, PREVIEW_LINE, PROGRAM, PUBLICATION, WARNING
+
+TITLE = "Psy Trance Rolling Basslines is a note-only MIDI study pack"
+SUBTITLE = "Eight bass studies, a matched byte check, and a simple-synth preview that is not a master"
+TAGS = ["midi", "bass", "psytrance", "music-production", "synthesis"]
+TAG_LINE = "Tags: " + ", ".join(TAGS)
+
+PARAGRAPHS = [
+    "DRAFT. " + PUBLICATION,
+    TAG_LINE,
+    "The pack is eight studies of rolling monophonic bass in 4/4. Each study has its own integer tempo from 138 to 148 BPM, its own length of 8 or 16 bars, and its own pitch collection. Those choices were written down before the notes. Each study has two bass variations. The sixteen bass files are the core. Harmonic references and kick patterns are reference files. They are listed in the catalog. They are not hidden backing tracks.",
+    "A variation has to change the phrase. Transposing a line, or only editing velocity, tempo, or a patch, does not count. Downbeat Void leaves every quarter-note downbeat empty and later thins to offbeat gates. Offbeat Ladder climbs E Phrygian dominant on odd sixteenths. Fifth Gate alternates root and fifth on a 3+3+2 grid, and variation B moves the pedal to the fifth. Short Gate Engine is a low 70-tick pattern against a five-note loop with a different rest grid. Held Fifth uses multi-bar holds cut by bursts. Five-Cell Crawl has no fixed tonic and rotates a five-pitch cell. Question and Gap adds a scale degree each cycle and then leaves a long rest; variation B fills that rest with a descending answer. Displaced Octave uses syncopated octave leaps, and variation B switches to fifths on a later grid.",
+    "Pitched notes stay between MIDI 28 and 60. C4 is 60. Bass parts are monophonic. The resolution is 960 ticks per quarter note. Note starts and durations are integers. There is no microtiming offset in this pack, so the performed start equals the nominal start. Kick references use General MIDI note 36, Acoustic Bass Drum, on channel 10.",
+    PROGRAM,
+    "Slides, filter movement, and accent as a synth parameter are not in the files. Gate length and velocity are the portable version of accent. The preview synth uses a saw for the bass, a triangle for the harmonic reference, and a falling sine plus a short noise click for the kick. That mapping is documented. It is not a program change.",
+    "The primary preview is study 01, Downbeat Void, variation A, for all 16 bars, with that study's harmonic reference and kick-a. The other studies are in the MIDI and are not in the audio preview. "
+    + PREVIEW_LINE
+    + ". The film takes its audio from that preview file and shows the words "
+    + ON_PICTURE
+    + " on the picture and in the WebVTT captions.",
+    AUDITION
+    + " The validator reopened the MIDI bytes and compared them with the canonical score. That is a structural check. The sample peak written beside the preview is the peak of the integer mix. It is not LUFS and it is not a true-peak reading. Nothing in this build is claimed as a master.",
+    "The stills are procedural illustrations of a timing grid, a ring, a ribbon, and kick markers. They are not photographs of a session or of performers.",
+    "When a public URL exists, use either the combined arrangement or the separate parts. " + WARNING,
+    "Call to action: keep the pack local until the repository, branch, and deployment target are confirmed. Then publish the MIDI, the matched report, and the preview together. Do not publish this draft to Medium, Instagram, or X from the draft files alone.",
+]
+
+
+def markdown() -> str:
+    body = "\n\n".join(PARAGRAPHS)
+    return f"# {TITLE}\n\n{SUBTITLE}\n\n{body}\n"
+
+
+def plain_text() -> str:
+    lines = [TITLE, "", SUBTITLE, "", *PARAGRAPHS, ""]
+    return "\n".join(lines) + "\n"
