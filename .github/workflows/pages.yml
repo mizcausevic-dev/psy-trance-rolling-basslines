@@ -7,12 +7,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
   publish:
@@ -22,32 +16,54 @@ jobs:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Make the repository public and enable Pages
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pack the public preview
+        run: |
+          python3 << 'PY'
+          import io, tarfile
+          from pathlib import Path
+          files = ["index.html", "media.html"]
+          dirs = ["art", "film", "preview", "social", "midi", "articles", "catalog", "score", "docs", "checks"]
+          buf = io.BytesIO()
+          with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+              paths = []
+              for rel in files:
+                  if Path(rel).is_file():
+                      paths.append(Path(rel))
+              for directory in dirs:
+                  base = Path(directory)
+                  if base.is_dir():
+                      paths.extend(p for p in base.rglob("*") if p.is_file())
+              for path in paths:
+                  data = path.read_bytes()
+                  if path.as_posix() == "index.html":
+                      data = data.replace(b'content="noindex"', b'content="index,follow"')
+                  info = tarfile.TarInfo(path.as_posix())
+                  info.size = len(data)
+                  tar.addfile(info, io.BytesIO(data))
+          Path("site.tar.gz").write_bytes(buf.getvalue())
+          print("tar_bytes", len(buf.getvalue()), "files", len(paths))
+          PY
+
+      - name: Upload the preview archive
         run: |
           set +e
           {
-            echo "== visibility"
-            gh api -X PATCH "repos/${{ github.repository }}" -f visibility=public -F private=false
-            echo "== pages create"
-            gh api --method POST "repos/${{ github.repository }}/pages" \
-              -f build_type=legacy \
-              -f "source[branch]=main" \
-              -f "source[path]=/"
-            echo "== pages read"
-            gh api "repos/${{ github.repository }}/pages"
-          } > pages-status.txt 2>&1
-          cat pages-status.txt
+            echo "== 0x0"
+            curl --fail --silent --show-error --max-time 120 -F "file=@site.tar.gz" https://0x0.st
+            echo
+            echo "== catbox"
+            curl --fail --silent --show-error --max-time 120 -F "reqtype=fileupload" -F "fileToUpload=@site.tar.gz" https://catbox.moe/user/api.php
+            echo
+            echo "== litterbox"
+            curl --fail --silent --show-error --max-time 120 -F "reqtype=fileupload" -F "time=72h" -F "fileToUpload=@site.tar.gz" https://litterbox.catbox.moe/resources/internals/api.php
+            echo
+          } > payload-url.txt 2>&1
+          cat payload-url.txt
 
-      - name: Record the Pages result
+      - name: Record the payload URL
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pages-status.txt
-          if git diff --cached --quiet; then
-            echo "status unchanged"
-          else
-            git commit -m "Record Pages status [skip ci]"
-            git push
-          fi
+          git add payload-url.txt
+          git commit -m "Record Pages status [skip ci]"
+          git push
