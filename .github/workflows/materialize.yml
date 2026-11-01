@@ -1,0 +1,70 @@
+name: Materialize pack
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true
+
+      - name: Restore generator sources
+        run: base64 -d source.b64 | tar -xzf -
+
+      - name: Install the preview renderer
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-dejavu-core
+
+      - name: Write MIDI, preview, film, and catalog
+        run: python3 tools/build_pack.py
+
+      - name: Commit the generated pack
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No generated changes."
+            exit 0
+          fi
+          git commit -m "Materialize MIDI, preview, and catalog [skip ci]"
+          git push
+
+      - name: Record topics
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api -X PUT "repos/${{ github.repository }}/topics" \
+            -f "names[]=midi" \
+            -f "names[]=psytrance" \
+            -f "names[]=bassline" \
+            -f "names[]=music-production" \
+            -f "names[]=electronic-music" \
+            -f "names[]=composition" \
+            -f "names[]=general-midi" \
+            -f "names[]=study-pack"
+
+      - name: Enable GitHub Pages from the repository root
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api -X POST "repos/${{ github.repository }}/pages" \
+            -f build_type=legacy \
+            -f "source[branch]=main" \
+            -f "source[path]=/" \
+          || gh api -X PUT "repos/${{ github.repository }}/pages" \
+            -f build_type=legacy \
+            -f "source[branch]=main" \
+            -f "source[path]=/"
