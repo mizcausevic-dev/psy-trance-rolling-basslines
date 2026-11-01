@@ -19,6 +19,38 @@ jobs:
         with:
           persist-credentials: true
 
+      - name: Repair the truncated composer tail
+        run: |
+          python3 - << 'PY'
+          import hashlib
+          from pathlib import Path
+          path = Path("tools/compose.py")
+          data = path.read_bytes()
+          good = "e7e60b55ff13e2e8c7f42bc3749af74e93569c92"
+          blob = hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+          print("compose_blob", blob, "bytes", len(data))
+          if blob == good:
+              raise SystemExit(0)
+          cut = 39663
+          prefix_good = "4d0efefa4390ed535a3808515165cd35ebf3a8dc9b3794818652a3dc09aac1dc"
+          prefix = hashlib.sha256(data[:cut]).hexdigest()
+          print("prefix", prefix)
+          if len(data) < cut or prefix != prefix_good:
+              raise SystemExit("compose.py prefix does not match the known-good generator")
+          tail = (
+              b'"arrangement": arrangement,\n'
+              b'        "identity_check": identity,\n'
+              b'    }\n'
+              b'    return {"catalog": catalog, "score": score}\n'
+          )
+          repaired = data[:cut] + tail
+          path.write_bytes(repaired)
+          blob = hashlib.sha1(b"blob %d\0" % len(repaired) + repaired).hexdigest()
+          print("repaired_blob", blob, "bytes", len(repaired))
+          if blob != good:
+              raise SystemExit("repair did not reproduce the known composer")
+          PY
+
       - name: Confirm generator blobs
         run: |
           python3 - << 'PY'
@@ -38,7 +70,7 @@ jobs:
               print(path, got, "OK" if got == digest else "MISMATCH")
               bad = bad or got != digest
           if bad:
-              sys.exit(1)
+              raise SystemExit(1)
           PY
 
       - name: Install ffmpeg and the disclosure font
