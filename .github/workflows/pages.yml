@@ -23,7 +23,7 @@ jobs:
           VISIBILITY_PAT: ${{ secrets.VISIBILITY_PAT }}
           ACTIONS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python3 << 'PY'
+          python3 << 'PY' > pages-status.txt 2>&1
           import json, os, urllib.error, urllib.request
 
           def call(token, method, path, body=None):
@@ -42,47 +42,27 @@ jobs:
               try:
                   with urllib.request.urlopen(req, timeout=60) as resp:
                       raw = resp.read().decode()
-                      return resp.status, raw[:500]
+                      return resp.status, raw[:400]
               except urllib.error.HTTPError as exc:
-                  return exc.code, exc.read().decode()[:500]
+                  return exc.code, exc.read().decode()[:400]
 
-          print("secret names via actions token:")
           status, body = call(os.environ["ACTIONS_TOKEN"], "GET", "/repos/mizcausevic-dev/psy-trance-rolling-basslines/actions/secrets")
-          print(status, body)
-
-          tokens = []
+          print("secrets", status, body)
           for name in ("GH_PAT", "GH_DEPLOY_TOKEN", "VISIBILITY_PAT", "ACTIONS_TOKEN"):
               value = os.environ.get(name) or ""
               print(f"{name}: {'set' if value else 'missing'}")
-              if value:
-                  tokens.append((name, value))
-
-          for name, token in tokens:
-              print("== visibility", name)
-              status, body = call(
-                  token,
-                  "PATCH",
-                  "/repos/mizcausevic-dev/psy-trance-rolling-basslines",
-                  {"visibility": "public"},
-              )
-              print(status, body)
-              print("== pages", name)
-              status, body = call(
-                  token,
-                  "POST",
-                  "/repos/mizcausevic-dev/psy-trance-rolling-basslines/pages",
-                  {"build_type": "legacy", "source": {"branch": "main", "path": "/"}},
-              )
-              print(status, body)
+              if not value:
+                  continue
+              print("visibility", name)
+              print(call(value, "PATCH", "/repos/mizcausevic-dev/psy-trance-rolling-basslines", {"visibility": "public"}))
+              print("pages", name)
+              print(call(value, "POST", "/repos/mizcausevic-dev/psy-trance-rolling-basslines/pages", {"build_type": "legacy", "source": {"branch": "main", "path": "/"}}))
           PY
 
       - name: Record the result
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # The step output is already in the Actions log. Write a short marker only.
-          printf 'visibility attempt finished
-' > pages-status.txt
           git add pages-status.txt
           git commit -m "Record Pages status [skip ci]"
           git push
