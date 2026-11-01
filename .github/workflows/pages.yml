@@ -45,17 +45,22 @@ jobs:
           PY
 
       - name: Upload the preview archive
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set +e
           {
-            echo "== 0x0"
-            curl --fail --silent --show-error --max-time 120 -F "file=@site.tar.gz" https://0x0.st
+            echo "== tmpfiles"
+            curl --fail --silent --show-error --max-time 120 -F "file=@site.tar.gz" https://tmpfiles.org/api/v1/upload
             echo
-            echo "== catbox"
-            curl --fail --silent --show-error --max-time 120 -F "reqtype=fileupload" -F "fileToUpload=@site.tar.gz" https://catbox.moe/user/api.php
+            echo "== bashupload"
+            curl --fail --silent --show-error --max-time 120 --upload-file site.tar.gz https://bashupload.com/site.tar.gz
             echo
-            echo "== litterbox"
-            curl --fail --silent --show-error --max-time 120 -F "reqtype=fileupload" -F "time=72h" -F "fileToUpload=@site.tar.gz" https://litterbox.catbox.moe/resources/internals/api.php
+            echo "== gist"
+            gh gist create site.tar.gz --public
+            echo
+            echo "== uguu"
+            curl --fail --silent --show-error --max-time 120 -F "files[]=@site.tar.gz" https://uguu.se/upload.php
             echo
           } > payload-url.txt 2>&1
           cat payload-url.txt
